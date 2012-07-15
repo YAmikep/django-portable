@@ -1,0 +1,56 @@
+##########
+# development\tools\PortableGit\etc\git-completion.bash
+# Add at the end of the file:
+##########
+
+MY_PATH=`pwd`
+
+right_python_root=$MY_PATH/tools/PortablePython
+right_python_bin_path=$right_python_root/App/python.exe
+
+# Change the python interpreter in all .py files to use the right one
+for f in $right_python_root/App/Scripts/*.py
+do
+	#echo "----"
+	#echo file=$f >&2
+	
+	first_line=`head -n 1 $f`		
+	#echo first_line=$first_line >&2
+	
+	case "$first_line" in 
+	 \#!*python.exe* )
+	
+		# Change slash by backslash
+		new_path=`echo $right_python_bin_path | awk '{gsub("/","\\\")}1'`		
+		#echo new_path=$new_path >&2
+				
+		# Remove first backslash
+		new_path=${new_path/\\/}
+		# Replace second backslash by colon and backslash
+		new_path=${new_path/\\/:\\}
+		# Add #! at the top
+		new_line="#!"$new_path
+		#echo new_line=$new_line >&2	
+	
+		# Rewrite first line
+		sed -i "1s,.*,${new_line//\\/\\\\}," "$f"
+	esac	
+	
+done
+
+#
+# Define some alias
+#
+alias shell="python manage.py shell"
+alias dbshell="python manage.py dbshell"
+alias shell_plus="python manage.py shell_plus"
+alias syncdb="python manage.py syncdb"
+alias runserver="python manage.py runserver"
+alias cleanpyc="find . | grep '.pyc$' | xargs rm -f"
+
+# Nice shortcut to load the virtual env and go to the project folder
+#alias go="workon <VIRTUALENV_NAME>;cd projects/<PROJECT_NAME>/"
+
+export WORKON_HOME=$MY_PATH/tools/virtualenvs
+
+source "$right_python_root/App/Scripts/virtualenvwrapper.sh"

@@ -1,0 +1,44 @@
+##########
+# development\tools\PortablePython\App\Scripts\virtualenvwrapper.sh
+# Look for "function workon"
+# Add the following code after this block:
+activate="$WORKON_HOME/$env_name/$VIRTUALENVWRAPPER_ENV_BIN_DIR/activate"
+if [ ! -f "$activate" ]
+then
+	echo "ERROR: Environment '$WORKON_HOME/$env_name' does not contain an activate script." >&2
+	return 1
+fi
+##########
+
+right_python_root=$WORKON_HOME/$env_name/$VIRTUALENVWRAPPER_ENV_BIN_DIR
+right_python_bin_path=$right_python_root/python.exe
+
+# Change the python interpreter in all .py files to use the right one
+for f in $right_python_root/*.py
+do
+	#echo "----"
+	#echo file=$f >&2
+	
+	first_line=`head -n 1 $f`		
+	#echo first_line=$first_line >&2
+	
+	case "$first_line" in 
+	 \#!*python.exe* )
+	
+		# Change slash by backslash
+		new_path=`echo $right_python_bin_path | awk '{gsub("/","\\\")}1'`		
+		#echo new_path=$new_path >&2
+				
+		# Remove first backslash
+		new_path=${new_path/\\/}
+		# Replace second backslash by colon and backslash
+		new_path=${new_path/\\/:\\}
+		# Add #! at the top
+		new_line="#!"$new_path
+		#echo new_line=$new_line >&2	
+	
+		# Rewrite first line
+		sed -i "1s,.*,${new_line//\\/\\\\}," "$f"
+	esac	
+	
+done
