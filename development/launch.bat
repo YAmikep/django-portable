@@ -11,7 +11,6 @@ set VIRTUALENVS_ROOT=%TOOLS_ROOT%\virtualenvs
 REM : SET PATH FOR ALL THE VIRTUAL ENVS
 REM : One line per virtualenv => just replace <VIRTUALENV_NAME> by the name of the virtual env
 REM echo %PYTHON_ROOT%\App > %VIRTUALENVS_ROOT%\<VIRTUALENV_NAME>\Lib\orig-prefix.txt
-echo %PYTHON_ROOT%\App > %VIRTUALENVS_ROOT%\django-1.4\Lib\orig-prefix.txt
 
 
 REM
